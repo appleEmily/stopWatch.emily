@@ -14,7 +14,7 @@ class ViewController: UIViewController,UITableViewDataSource {
     var timer: Timer = Timer()
     var stop:Bool = true
     var cellLabel: UILabel?
-    var timeArray: Array = [Double]()
+    var timeArray: Array = [String]()
     
     @IBOutlet weak var label: UILabel!
     //@IBOutlet weak var cell: UIView!
@@ -41,8 +41,9 @@ class ViewController: UIViewController,UITableViewDataSource {
         if stop == false {
             timer.invalidate()
             print(number)
-            timeArray.append(Double(number))
+            timeArray.append(String(format: "%.3f",number))
             print(timeArray)
+            tableView.reloadData()
         } else {
             //継続させる
             timer = Timer.scheduledTimer(timeInterval: 0.01,target: self,selector:  #selector(self.up),userInfo: nil,repeats: true)
@@ -55,18 +56,15 @@ class ViewController: UIViewController,UITableViewDataSource {
         stop = true
         label.text = "new"
         timeArray.removeAll()
-        
+        tableView.reloadData()
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Cellの内容を決める（超重要）
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         if stop == false {
-        cell.textLabel!.text = String(timeArray[indexPath.row])
+            cell.textLabel!.text = String(timeArray[indexPath.row])
         }
-        tableView.performBatchUpdates({
-            self.tableView.reloadData()
-        })
         return cell
     }
     
@@ -74,6 +72,7 @@ class ViewController: UIViewController,UITableViewDataSource {
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(timeArray.count)
         return timeArray.count
     }
     override func didReceiveMemoryWarning() {
